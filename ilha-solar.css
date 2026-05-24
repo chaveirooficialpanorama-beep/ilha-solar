@@ -1539,3 +1539,33 @@
       display: none;
     }
   }
+
+  .footer-social-icons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .footer-social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(253, 217, 0, 0.1);
+    color: var(--gold);
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .footer-social-icons a:hover {
+    background: rgba(253, 217, 0, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .footer-social-icons svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
