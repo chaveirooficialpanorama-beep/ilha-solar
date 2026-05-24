@@ -1569,3 +1569,23 @@
     height: 16px;
     stroke: currentColor;
   }
+
+  .footer-maps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .footer-maps-link:hover {
+    color: var(--white-ice);
+    text-decoration: underline;
+  }
+
+  .footer-maps-link svg {
+    min-width: 16px;
+    flex-shrink: 0;
+  }
