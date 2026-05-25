@@ -11,6 +11,233 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <link rel="stylesheet" href="ilha-solar.css" />
+<style>
+  #webhook-simulador {
+    padding: 4rem 1.5rem;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  #webhook-simulador .webhook-inner {
+    max-width: min(1080px, 100%);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  #webhook-simulador .section-title {
+    margin-bottom: 2rem;
+  }
+  #webhook-simulador .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    background: rgba(6, 18, 36, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 28px;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, 0.22);
+    overflow: visible;
+  }
+  #webhook-simulador .card-body {
+    padding: 2rem 2rem 2.5rem;
+  }
+  #webhook-simulador .field {
+    margin-bottom: 1.4rem;
+  }
+  #webhook-simulador label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 0.7rem;
+  }
+  #webhook-simulador input[type="text"],
+  #webhook-simulador input[type="tel"],
+  #webhook-simulador input[type="number"],
+  #webhook-simulador select {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-editorial), sans-serif;
+    font-size: 0.95rem;
+    color: var(--white-ice);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  #webhook-simulador input:focus,
+  #webhook-simulador select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(253, 217, 0, 0.16);
+    background: rgba(255, 255, 255, 0.12);
+  }
+  #webhook-simulador input::placeholder { color: rgba(255, 255, 255, 0.4); }
+  #webhook-simulador .select-wrap { position: relative; }
+  #webhook-simulador .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid rgba(255, 255, 255, 0.65);
+    pointer-events: none;
+  }
+  #webhook-simulador select { padding-right: 44px; cursor: pointer; }
+  #webhook-simulador .divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 28px 0;
+  }
+  #webhook-simulador .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 15px 20px;
+    background: var(--gold);
+    color: var(--black);
+    font-family: var(--font-title), sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.18s, box-shadow 0.25s;
+    box-shadow: 0 12px 28px rgba(253, 217, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  #webhook-simulador .btn-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    border-radius: 18px;
+  }
+  #webhook-simulador .btn-submit:hover:not(:disabled) {
+    background: var(--white-ice);
+    color: var(--black);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
+  }
+  #webhook-simulador .btn-submit:active:not(:disabled) { transform: translateY(0); }
+  #webhook-simulador .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+  #webhook-simulador .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #webhook-simulador .footer-note {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+    margin-top: 18px;
+    line-height: 1.7;
+  }
+  #webhook-simulador #resultado {
+    display: none;
+    padding: 0;
+    text-align: center;
+    animation: fadeUp .5s ease forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #webhook-simulador .checkmark {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--gold), rgba(253, 217, 0, 0.8));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 12px 32px rgba(253, 217, 0, 0.25);
+  }
+  #webhook-simulador #resultado h2 {
+    font-family: var(--font-title), sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--white-ice);
+    margin-bottom: 0.8rem;
+  }
+  #webhook-simulador #resultado p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  #webhook-simulador .economia-box {
+    background: linear-gradient(135deg, rgba(19, 62, 103, 0.95) 0%, rgba(9, 30, 47, 0.95) 100%);
+    border-radius: 24px;
+    padding: 24px;
+    margin: 24px auto 0;
+    position: relative;
+    overflow: hidden;
+    max-width: 420px;
+  }
+  #webhook-simulador .economia-box::after {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(253,217,0,0.3) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+  #webhook-simulador .economia-box .label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 8px;
+    display: block;
+  }
+  #webhook-simulador .economia-box .valor {
+    font-family: var(--font-title), sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+    word-break: break-word;
+  }
+  #webhook-simulador .economia-box .sub {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.72);
+  }
+  #webhook-simulador .error-msg {
+    background: rgba(255, 240, 240, 0.12);
+    border: 1px solid rgba(255, 192, 192, 0.28);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    color: #ffb3b3;
+    margin-top: 14px;
+    display: none;
+  }
+  @media (max-width: 800px) {
+    #webhook-simulador { padding: 2.5rem 1rem; }
+    #webhook-simulador .card { border-radius: 22px; }
+    #webhook-simulador .economia-box .valor { font-size: 2rem; }
+  }
+</style>
 </head>
 <body>
 
@@ -72,7 +299,7 @@
       <h2 class="section-title reveal">Liberdade financeira<br>a partir de <em>hoje</em>.</h2>
       <div class="fotovoltaica-economy reveal">
         <div class="economy-big">ATÉ<br>90%</div>
-        <p class="economy-desc">Sua conta de luz é um dos maiores pesos do bolso. Com energia solar, você deixa de ser cliente de energia cara — passa a ser seu próprio fornecedor. Resultado: economiza <strong>até 90%</strong> a cada mês, com retorno do investimento em 5 a 7 anos.</p>
+        <p class="economy-desc">Sua conta de luz é um dos maiores pesos do bolso. Com energia solar, você deixa de ser cliente de energia cara — passa a ser seu próprio fornecedor. Resultado: economiza <strong>até 90%</strong> a cada mês, com retorno do investimento em até 3 anos.</p>
       </div>
       <div class="fotovoltaica-illustration reveal">
         <svg viewBox="0 0 500 220" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -363,109 +590,6 @@
   </div>
 </section>
 
-<!-- BRASIL IMPACT -->
-<section id="brasil-impact">
-  <div class="brasil-inner">
-    <div class="brasil-header reveal">
-      <div class="section-label" style="justify-content:center">Impacto Nacional</div>
-      <h2 class="section-title" style="text-align:center">O que a energia solar<br>traz para o <em>Brasil</em></h2>
-      <p class="brasil-subtitle">Números que comprovam a transformação de um país que aposta na força do sol.</p>
-    </div>
-    <div class="brasil-grid">
-      <div class="brasil-card reveal">
-        <div class="brasil-card-bg"></div>
-        <div class="brasil-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-        </div>
-        <div class="brasil-value">
-          <span class="brasil-prefix">R$</span>
-          <span class="brasil-num counter" data-target="313" data-decimal=",1">0</span>
-          <span class="brasil-suffix">bilhões</span>
-        </div>
-        <div class="brasil-label">em novos investimentos</div>
-        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:100%"></div></div>
-      </div>
-      <div class="brasil-card reveal">
-        <div class="brasil-card-bg"></div>
-        <div class="brasil-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-        </div>
-        <div class="brasil-value">
-          <span class="brasil-num counter" data-target="2" data-decimal=",1">0</span>
-          <span class="brasil-suffix">milhões</span>
-        </div>
-        <div class="brasil-label">de novos empregos</div>
-        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:67%"></div></div>
-      </div>
-      <div class="brasil-card reveal">
-        <div class="brasil-card-bg"></div>
-        <div class="brasil-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-            <path d="M7 8h2l1 3 2-6 1 3h2"/>
-          </svg>
-        </div>
-        <div class="brasil-value">
-          <span class="brasil-prefix">R$</span>
-          <span class="brasil-num counter" data-target="98" data-decimal=",1">0</span>
-          <span class="brasil-suffix">bilhões</span>
-        </div>
-        <div class="brasil-label">em arrecadação de tributos</div>
-        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:31%"></div></div>
-      </div>
-      <div class="brasil-card reveal">
-        <div class="brasil-card-bg"></div>
-        <div class="brasil-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="M12 8a4 4 0 0 1 0 8"/><path d="M8 12h8"/>
-          </svg>
-        </div>
-        <div class="brasil-value">
-          <span class="brasil-num counter" data-target="115" data-decimal=",7">0</span>
-          <span class="brasil-suffix">mi ton.</span>
-        </div>
-        <div class="brasil-label">de CO₂ evitadas</div>
-        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:37%"></div></div>
-      </div>
-      <div class="brasil-card reveal">
-        <div class="brasil-card-bg"></div>
-        <div class="brasil-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-          </svg>
-        </div>
-        <div class="brasil-value">
-          <span class="brasil-num counter" data-target="70" data-decimal=",3">0</span>
-          <span class="brasil-suffix">GW</span>
-        </div>
-        <div class="brasil-label">de capacidade instalada</div>
-        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:22%"></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section id="cta-final">
-  <div class="cta-final-bg"></div>
-  <div class="cta-final-inner">
-    <div class="section-label reveal">Decisão inteligente</div>
-    <h2 class="cta-final-title reveal">Pare de pagar caro<br>e comece a <em>economizar</em> hoje.</h2>
-    <p class="cta-final-sub reveal">Receba uma simulação personalizada e descubra exatamente quanto você vai economizar a cada mês. Sem compromisso, 100% gratuito.</p>
-    <a href="mailto:contato@ilhasolar.com.br" class="btn-glow reveal">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-      </svg>
-      Quero receber minha simulação
-    </a>
-    <p style="font-size:0.65rem;color:rgba(245,245,243,0.2);margin-top:1.5rem;letter-spacing:0.1em">Resposta em até 2 horas · Sem compromisso</p>
-  </div>
-</section>
-
 <!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="testimonials-inner">
@@ -555,6 +679,162 @@
   </div>
 </section>
 
+<!-- BRASIL IMPACT -->
+<section id="brasil-impact">
+  <div class="brasil-inner">
+    <div class="brasil-header reveal">
+      <div class="section-label" style="justify-content:center">Impacto Nacional</div>
+      <h2 class="section-title" style="text-align:center">O que a energia solar<br>traz para o <em>Brasil</em></h2>
+      <p class="brasil-subtitle">Números que comprovam a transformação de um país que aposta na força do sol.</p>
+    </div>
+    <div class="brasil-grid">
+      <div class="brasil-card reveal">
+        <div class="brasil-card-bg"></div>
+        <div class="brasil-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="brasil-value">
+          <span class="brasil-prefix">R$</span>
+          <span class="brasil-num counter" data-target="313" data-decimal=",1">0</span>
+          <span class="brasil-suffix">bilhões</span>
+        </div>
+        <div class="brasil-label">em novos investimentos</div>
+        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:100%"></div></div>
+      </div>
+      <div class="brasil-card reveal">
+        <div class="brasil-card-bg"></div>
+        <div class="brasil-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="brasil-value">
+          <span class="brasil-num counter" data-target="2" data-decimal=",1">0</span>
+          <span class="brasil-suffix">milhões</span>
+        </div>
+        <div class="brasil-label">de novos empregos</div>
+        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:67%"></div></div>
+      </div>
+      <div class="brasil-card reveal">
+        <div class="brasil-card-bg"></div>
+        <div class="brasil-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            <path d="M7 8h2l1 3 2-6 1 3h2"/>
+          </svg>
+        </div>
+        <div class="brasil-value">
+          <span class="brasil-prefix">R$</span>
+          <span class="brasil-num counter" data-target="98" data-decimal=",1">0</span>
+          <span class="brasil-suffix">bilhões</span>
+        </div>
+        <div class="brasil-label">em arrecadação de tributos</div>
+        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:31%"></div></div>
+      </div>
+      <div class="brasil-card reveal">
+        <div class="brasil-card-bg"></div>
+        <div class="brasil-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="M12 8a4 4 0 0 1 0 8"/><path d="M8 12h8"/>
+          </svg>
+        </div>
+        <div class="brasil-value">
+          <span class="brasil-num counter" data-target="115" data-decimal=",7">0</span>
+          <span class="brasil-suffix">mi ton.</span>
+        </div>
+        <div class="brasil-label">de CO₂ evitadas</div>
+        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:37%"></div></div>
+      </div>
+      <div class="brasil-card reveal">
+        <div class="brasil-card-bg"></div>
+        <div class="brasil-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div class="brasil-value">
+          <span class="brasil-num counter" data-target="70" data-decimal=",3">0</span>
+          <span class="brasil-suffix">GW</span>
+        </div>
+        <div class="brasil-label">de capacidade instalada</div>
+        <div class="brasil-bar"><div class="brasil-bar-fill" style="--pct:22%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULADOR WEBHOOK -->
+<section id="webhook-simulador" class="reveal">
+  <div class="webhook-inner">
+    <div class="section-label reveal">Simulador</div>
+    <h2 class="section-title reveal">Calcule sua economia agora</h2>
+    <div class="card reveal">
+      <div class="card-body" id="form-section">
+        <form id="formulario" novalidate>
+          <div class="field">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="telefone">Telefone (WhatsApp)</label>
+            <input type="tel" id="telefone" name="telefone" placeholder="(11) 91234-5678" required autocomplete="tel">
+          </div>
+          <hr class="divider">
+          <div class="field">
+            <label for="cidade">Cidade</label>
+            <div class="select-wrap">
+              <select id="cidade" name="cidade" required disabled>
+                <option value="" disabled selected>Selecione o estado primeiro</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="conta">Valor médio da conta de luz (R$)</label>
+            <input type="number" id="conta" name="valor_conta_luz" placeholder="Ex: 750" min="50" required>
+          </div>
+          <button type="submit" class="btn-submit" id="botao">Calcular economia</button>
+          <div class="error-msg" id="erro-msg">Ocorreu um erro ao enviar. Por favor, tente novamente.</div>
+        </form>
+        <p class="footer-note">Atenção: os valores são estimativas. Para confirmar a viabilidade e o valor exato, é necessária avaliação técnica.</p>
+      </div>
+      <div id="resultado">
+        <div class="checkmark">
+          <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 15L12.5 21.5L24 9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>Simulação concluída!</h2>
+        <p>Olá, <strong id="nome-destaque"></strong>! Veja abaixo a estimativa de economia para <strong id="cidade-destaque"></strong>:</p>
+        <div class="economia-box">
+          <span class="label">Economia anual projetada</span>
+          <span class="valor" id="economiaAnualDestaque">—</span>
+          <span class="sub">Estimativa de abatimento mensal: <span id="economiaMensalValor">—</span></span>
+        </div>
+        <p style="margin-top:1.5rem;color:rgba(255,255,255,0.78);">Nossa equipe entrará em contato via WhatsApp para apresentar uma proposta personalizada e sem compromisso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta-final">
+  <div class="cta-final-bg"></div>
+  <div class="cta-final-inner">
+    <div class="section-label reveal">Decisão inteligente</div>
+    <h2 class="cta-final-title reveal">Pare de pagar caro<br>e comece a <em>economizar</em> hoje.</h2>
+    <p class="cta-final-sub reveal">Receba uma simulação personalizada e descubra exatamente quanto você vai economizar a cada mês. Sem compromisso, 100% gratuito.</p>
+    <a href="mailto:contato@ilhasolar.com.br" class="btn-glow reveal">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
+      Quero receber minha simulação
+    </a>
+    <p style="font-size:0.65rem;color:rgba(245,245,243,0.2);margin-top:1.5rem;letter-spacing:0.1em">Resposta em até 2 horas · Sem compromisso</p>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -599,5 +879,139 @@
 
 <!-- JavaScript externo — carregado no final do body para melhor performance -->
 <script src="main.js"></script>
+<script>
+  const cidadesPorUF = {
+    SP: [
+      "Bertioga",
+      "Caraguatatuba",
+      "Guarujá",
+      "Ilhabela",
+      "Praia Grande",
+      "Santos",
+      "São Sebastião",
+      "São Vicente",
+      "Ubatuba"
+    ],
+  };
+
+  const elCidade = document.getElementById('cidade');
+  (function populateCidades() {
+    const cidades = cidadesPorUF['SP'] || [];
+    elCidade.innerHTML = '<option value="" disabled selected>Selecione a cidade</option>';
+    cidades.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      elCidade.appendChild(opt);
+    });
+    elCidade.disabled = false;
+  })();
+
+  document.getElementById('telefone').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d*)$/, '($1) $2-$3');
+    else if (v.length > 2) v = v.replace(/^(\d{2})(\d*)$/, '($1) $2');
+    this.value = v;
+  });
+
+  const tarifaUF = {
+    AC:0.82, AL:0.88, AM:0.77, AP:0.80, BA:0.83, CE:0.84, DF:0.73, ES:0.76, GO:0.70,
+    MA:0.82, MG:0.72, MS:0.71, MT:0.71, PA:0.81, PB:0.87, PE:0.86, PI:0.83, PR:0.65,
+    RJ:0.79, RN:0.88, RO:0.78, RR:0.74, RS:0.63, SC:0.64, SE:0.87, SP:0.69, TO:0.73
+  };
+  const PSH_DEFAULT = 4.8;
+
+  function calcEconomia(conta, uf) {
+    const tarifa = tarifaUF[uf] || 0.75;
+    const eficiencia = 0.80;
+    const kwhMes = (conta / tarifa) * eficiencia;
+    const economiaMes = kwhMes * tarifa * 0.88;
+    return { mes: economiaMes, ano: economiaMes * 12 };
+  }
+
+  const WEBHOOK = 'https://hook.us2.make.com/fdlmxfaph846hlhjq6x80ofcy6shgybw';
+  const form = document.getElementById('formulario');
+  const botao = document.getElementById('botao');
+  const erroMsg = document.getElementById('erro-msg');
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    erroMsg.style.display = 'none';
+
+    const nome = document.getElementById('nome').value.trim();
+    const tel = document.getElementById('telefone').value.trim();
+    const uf = 'SP';
+    const cidade = document.getElementById('cidade').value;
+    const conta = parseFloat(document.getElementById('conta').value);
+
+    if (!nome || !tel || !cidade || !conta) {
+      erroMsg.textContent = 'Por favor, preencha todos os campos.';
+      erroMsg.style.display = 'block';
+      return;
+    }
+
+    const { mes, ano } = calcEconomia(conta, uf);
+    const fmtBRL = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    botao.disabled = true;
+    botao.innerHTML = '<span class="spinner"></span>Calculando...';
+
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', {
+        content_name: 'Simulador Solar',
+        content_category: 'Energia Solar',
+        status: true,
+      });
+    }
+
+    const payload = {
+      nome,
+      telefone: tel,
+      estado: uf,
+      cidade,
+      valor_conta_luz: conta,
+      economia_mensal: fmtBRL(mes),
+      economia_anual: fmtBRL(ano),
+      data_envio: new Date().toISOString(),
+      pagina: {
+        url: window.location.href,
+        referrer: document.referrer || null,
+        titulo: document.title,
+        user_agent: navigator.userAgent,
+        idioma: navigator.language,
+        resolucao: `${screen.width}x${screen.height}`,
+        fbc: getCookie('_fbc') || null,
+        fbp: getCookie('_fbp') || null,
+      },
+    };
+
+    try {
+      await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      showResult(nome, cidade, fmtBRL(mes), fmtBRL(ano));
+    } catch (err) {
+      showResult(nome, cidade, fmtBRL(mes), fmtBRL(ano));
+    }
+  });
+
+  function showResult(nome, cidade, mes, ano) {
+    document.getElementById('form-section').style.display = 'none';
+    const res = document.getElementById('resultado');
+    document.getElementById('nome-destaque').textContent = nome.split(' ')[0];
+    document.getElementById('cidade-destaque').textContent = cidade;
+    document.getElementById('economiaAnualDestaque').textContent = ano;
+    document.getElementById('economiaMensalValor').textContent = mes;
+    res.style.display = 'block';
+  }
+</script>
 </body>
 </html>
